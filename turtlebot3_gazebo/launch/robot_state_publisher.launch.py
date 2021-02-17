@@ -23,12 +23,16 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch.actions import (ExecuteProcess, GroupAction, IncludeLaunchDescription, LogInfo)
+from launch_ros.actions import SetRemap
 
 
 def generate_launch_description():
     TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    namespace = LaunchConfiguration('namespace', default='')
+
     urdf_file_name = 'turtlebot3_' + TURTLEBOT3_MODEL + '.urdf'
 
     print('urdf_file_name : {}'.format(urdf_file_name))
@@ -43,12 +47,32 @@ def generate_launch_description():
             'use_sim_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='',
+            description='namespace for the robot state publisher node'),
 
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
-            arguments=[urdf]),
+        # Node(
+        #     package='robot_state_publisher',
+        #     executable='robot_state_publisher',
+        #     name='robot_state_publisher',
+        #     output='screen',
+        #     parameters=[{'use_sim_time': use_sim_time}],
+        #     arguments=[urdf],
+        #     namespace=namespace)  # TODO: DEFINE NAMESPACE HERE SOMEHOW
+
+        GroupAction([
+
+            SetRemap(src='/tf', dst='tf'),
+            SetRemap(src='/static_tf', dst='static_tf'),
+            LogInfo(msg="==============REMAPS SET IN ROBOT_STATE_PUBLISHER============="),
+            Node(
+                package='robot_state_publisher',
+                executable='robot_state_publisher',
+                name='robot_state_publisher',
+                output='screen',
+                parameters=[{'use_sim_time': use_sim_time}],
+                arguments=[urdf],
+                namespace=namespace)  # TODO: DEFINE NAMESPACE HERE SOMEHOW
+        ])
     ])
