@@ -2,6 +2,18 @@
 Changelog for package turtlebot3_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.3 (2021-04-12)
+------------------
+* Update required keyword arguments
+* Clear up exec_depend
+* Fix Waffle Pi wheel inertia
+* Contributors: ruffsl, Will Son
+
+2.2.2 (2021-02-24)
+------------------
+* Remove shared objects built in older version
+* Contributors: Will Son
+
 2.2.1 (2021-01-13)
 ------------------
 * Eloquent Elusor EOL
